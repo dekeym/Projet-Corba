@@ -1,0 +1,99 @@
+Module ChatChelou 
+{
+
+	exception CertificatIntrouvable {
+		string raisonCertificatIntrouvable;
+	};
+
+	exception CertificatDejaCree {
+		string raisonCertificatDejaCree;
+	};
+
+
+
+	type def struct Date 
+	{
+		short jour;
+		short mois;
+		short annee;
+	}
+
+	typedef sequence <string> ListUsages;
+	typedef sequence <Certificat> ListLC;
+	typedef sequence <Certificat> ListLCR;
+
+	type def struct Certificat 
+	{
+		private string identifiantCertificat;
+		string publicKey;
+		string ACreferant;
+		string signatureAC;
+		string signature;
+		Date dateDebut;
+		Date dateFin;
+		ListUsages usages; 
+		string identifiantAV;
+		Boolean droitRevocation;
+	};
+
+
+
+	interface Utilisateur 
+	{
+		attribute string nomUtilisateur;
+		private attribute Certificat certificatUtilisateur;
+		attribute string publicKey;
+		private attribute string privateKey;
+
+		void transfererMessage (in string message);
+		Certificat demanderCertificat (in Certificat certificatDestinataire);
+	};
+
+	interface Annuaire 
+	{
+		attribute HashMap<identiteUtilisateur, certificatUtilisateur> listUtilisateurs;
+
+		HashMap<identiteUtilisateur, certificatUtilisateur> demanderListeUtilisateurs(in ListUsages usages);
+	};
+
+	interface AV 
+	{
+		private attribute string identifiantAV;
+		attribute short niveau;
+
+		string demandeValidationCertificat(in Certificat certificatUtilisateur) 
+			raises CertificatIntrouvable();
+	};
+
+	interface AE
+	{
+		private attribute string identifiantAE;
+		attribute short niveau;
+
+		Certificat creationDeCertificat(in string nomUtilisateur, in ListUsages usages, in string CP)
+			raises CertificatDejaCree() ;
+		string demandeDeSuspension(in string nomUtilisateur, in Certificat certificatUtilisateur) 
+			raises CertificatIntrouvable();
+		string demandeDeRevocation(in string nomUtilisateur, in Certificat certificatUtilisateur) 
+			raises CertificatIntrouvable();
+	};
+
+	interface AC
+	{
+		private attribute string identifiantAC;
+		private attribute Certificat certificatAC;
+		attribute short niveau;
+		attribute ListLC LC; 
+		attribute ListLC LCR; 
+
+		Certificat creationDeCertificat(in string nomUtilisateur, in ListUsages usages, in string CP)
+			raises (CertificatDejaCree);
+		string demandeDeSuspension(in string nomUtilisateur, in Certificat certificatUtilisateur) 
+			raises (CertificatIntrouvable);
+		string demandeDeRevocation(in string nomUtilisateur, in Certificat certificatUtilisateur) 
+			raises (CertificatIntrouvable);
+		string demandeValidationCertificat(in Certificat certificatUtilisateur) 
+			raises (CertificatIntrouvable);
+	};
+
+}
