@@ -11,7 +11,7 @@ Module ChatChelou
 
 
 
-	type def struct Date 
+	typedef struct Date 
 	{
 		short jour;
 		short mois;
@@ -22,7 +22,7 @@ Module ChatChelou
 	typedef sequence <Certificat> ListLC;
 	typedef sequence <Certificat> ListLCR;
 
-	type def struct Certificat 
+	typedef struct Certificat 
 	{
 		private string identifiantCertificat;
 		string publicKey;
@@ -62,7 +62,7 @@ Module ChatChelou
 		attribute short niveau;
 
 		string demandeValidationCertificat(in Certificat certificatUtilisateur) 
-			raises CertificatIntrouvable();
+			raises (CertificatIntrouvable);
 	};
 
 	interface AE
@@ -71,11 +71,11 @@ Module ChatChelou
 		attribute short niveau;
 
 		Certificat creationDeCertificat(in string nomUtilisateur, in ListUsages usages, in string CP)
-			raises CertificatDejaCree() ;
+			raises (CertificatDejaCree) ;
 		string demandeDeSuspension(in string nomUtilisateur, in Certificat certificatUtilisateur) 
-			raises CertificatIntrouvable();
+			raises (CertificatIntrouvable);
 		string demandeDeRevocation(in string nomUtilisateur, in Certificat certificatUtilisateur) 
-			raises CertificatIntrouvable();
+			raises (CertificatIntrouvable);
 	};
 
 	interface AC
